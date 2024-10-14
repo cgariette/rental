@@ -15,8 +15,13 @@
                             <a class="btn btn-primary btn-block btn-sm col-sm-2 float-right" href="index.php?page=add_building">
                                 <i class="fa fa-plus"></i> New Property
                             </a>
+                            <!-- Print Button -->
+                            <a class="btn btn-secondary btn-block btn-sm col-sm-2 float-right mr-2" href="print_properties.php" target="_blank">
+                                <i class="fa fa-print"></i> Print
+                            </a>
                         </span>
                     </div>
+                    
                     <div class="card-body">
                         <table class="table table-condensed table-bordered table-hover">
                             <thead>

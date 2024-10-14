@@ -6,8 +6,6 @@
             <div class="col-md-12"></div>
         </div>
         <div class="row">
-            <!-- FORM Panel -->
-            <!-- Table Panel -->
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -24,23 +22,57 @@
                                 <tr>
                                     <th class="text-center">Lease No.</th>
                                     <th class="">Unit Code</th>
-                                    <th class="">Unit</th>
+                                    <th class="">Building</th>
                                     <th class="">Tenant</th>
                                     <th class="">Rent</th>
-                                    <th class="">Last Billing</th>
-                                    <th class="">Due</th>
+                                    <th class="">Start Date</th>
+                                    <th class="">Due On</th>
                                     <th class="">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Your existing table data code goes here -->
+                                <?php
+                                // SQL query to fetch the necessary data
+                                $query = "SELECT 
+                                            l.id AS lease_no, 
+                                            u.unit_no, 
+                                            b.property_name, 
+                                            c.full_name AS tenant_name, 
+                                            l.rent_amount, 
+                                            l.start_date, 
+                                            l.due_on, 
+                                            IF(l.terms = 1, 'Active', 'Inactive') AS status
+                                          FROM leases l
+                                          JOIN buildings b ON l.building_id = b.id
+                                          JOIN apartments u ON l.unit_id = u.id
+                                          JOIN clients c ON l.tenant_id = c.id";
+                                
+                                $result = $conn->query($query);
+                                while($row = $result->fetch_assoc()) {
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?php echo $row['lease_no']; ?></td>
+                                    <td><?php echo $row['unit_no']; ?></td>
+                                    <td><?php echo $row['property_name']; ?></td>
+                                    <td><?php echo $row['tenant_name']; ?></td>
+                                    <td><?php echo $row['rent_amount']; ?></td>
+                                    <td><?php echo date('Y-m-d', strtotime($row['start_date'])); ?></td>
+                                    <td><?php echo $row['due_on']; ?></td>
+                                    <td><?php echo $row['status']; ?></td>
+                                    <td class="text-center">
+                                        <!-- Action buttons -->
+                                        <button class="btn btn-sm btn-primary view_payment" data-id="<?php echo $row['lease_no']; ?>">View Payment</button>
+                                        <button class="btn btn-sm btn-warning edit_tenant" data-id="<?php echo $row['lease_no']; ?>">Edit</button>
+                                        <button class="btn btn-sm btn-danger delete_tenant" data-id="<?php echo $row['lease_no']; ?>">Delete</button>
+                                    </td>
+                                </tr>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <!-- Table Panel -->
         </div>
     </div>
 </div>
@@ -49,8 +81,6 @@
     $(document).ready(function() {
         $('table').dataTable();
     });
-
-    // Other existing event handlers for payments, tenant actions, etc.
 
     $('.view_payment').click(function() {
         uni_modal("Tenant's Payments", "view_payment.php?id=" + $(this).attr('data-id'), "large");
@@ -61,23 +91,25 @@
     });
 
     $('.delete_tenant').click(function() {
-        _conf("Are you sure to delete this Tenant?", "delete_tenant", [$(this).attr('data-id')]);
+        _conf("Are you sure you want to delete this lease?", "delete_tenant", [$(this).attr('data-id')]);
     });
 
-    function delete_tenant($id) {
-        start_load();
-        $.ajax({
-            url: 'ajax.php?action=delete_tenant',
-            method: 'POST',
-            data: { id: $id },
-            success: function(resp) {
-                if (resp == 1) {
-                    alert_toast("Data successfully deleted", 'success');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1500);
+    function delete_tenant(id) {
+        if (confirm("Are you sure you want to delete this lease?")) {
+            $.ajax({
+                url: 'ajax.php?action=delete_tenant',
+                method: 'POST',
+                data: { id: id },
+                success: function(resp) {
+                    if (resp.includes('1')) {
+                        alert('Lease deleted successfully.');
+                        location.reload(); // Refresh the page to see changes
+                    } else {
+                        alert('Failed to delete lease.');
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 </script>
+

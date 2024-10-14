@@ -212,32 +212,39 @@ if (isset($_GET['action']) && $_GET['action'] == 'save_lease') {
     $landlord_signature = $_POST['landlord_signature'];
     $terms = isset($_POST['terms']) ? 1 : 0;
 
-    // Check if a lease already exists for the unit and tenant
-    //$check = $conn->prepare("SELECT * FROM leases WHERE unit_id = ? AND tenant_id = ?");
-    //$check->bind_param("ii", $unit_id, $tenant_id);
-    //$check->execute();
-    //$result = $check->get_result();
-
-    $check_lease = $conn->query("SELECT * FROM leases WHERE unit_id = '$unit_id' AND tenant_id = '$tenant_id' LIMIT 1");
+    // Check if a lease already exists for the unit (regardless of tenant)
+    $check_lease = $conn->query("SELECT * FROM leases WHERE unit_id = '$unit_id' LIMIT 1");
     if ($check_lease->num_rows > 0) {
         echo 2; // Lease already exists
         exit();
     }
-    
-    //if ($result->num_rows > 0) {
-       // echo "2"; // Lease already exists
-    else {
-        // Insert new lease
-        $stmt = $conn->prepare("INSERT INTO leases (building_id, unit_id, tenant_id, rent_amount, start_date, due_on, deposit_amount, processing_fee, service_fee, garbage_fee, water_fee, late_fee, invoice_day, tenant_signature, landlord_signature, terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiissidddddddsss", $building_id, $unit_id, $tenant_id, $rent_amount, $start_date, $due_on, $deposit_amount, $processing_fee, $service_fee, $garbage_fee, $water_fee, $late_fee, $invoice_day, $tenant_signature, $landlord_signature, $terms);
 
-        if ($stmt->execute()) {
-            echo "1"; // Lease successfully saved
-        } else {
-            echo "3"; // Failed to save lease
-        }
+    // Insert the new lease if no existing lease is found
+    $stmt = $conn->prepare("INSERT INTO leases (building_id, unit_id, tenant_id, rent_amount, start_date, due_on, deposit_amount, processing_fee, service_fee, garbage_fee, water_fee, late_fee, invoice_day, tenant_signature, landlord_signature, terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iiissidddddddsss", $building_id, $unit_id, $tenant_id, $rent_amount, $start_date, $due_on, $deposit_amount, $processing_fee, $service_fee, $garbage_fee, $water_fee, $late_fee, $invoice_day, $tenant_signature, $landlord_signature, $terms);
+
+    if ($stmt->execute()) {
+        echo "1"; // Lease successfully saved
+    } else {
+        echo "3"; // Failed to save lease
     }
 }
+
+
+if (isset($_GET['action']) && $_GET['action'] == 'delete_tenant') {
+    $id = $conn->real_escape_string($_GET['id']);
+
+    // Delete the client from the database
+    $sql = "DELETE FROM leases WHERE id = '$id'";
+
+    if ($conn->query($sql) === TRUE) {
+        echo 1; // Client deleted successfully
+    } else {
+        echo 0; // Failed to delete the client
+    }
+    exit();
+}
+
 
 
 ob_end_flush();

@@ -40,7 +40,7 @@
       <div class="col-lg-12">
          <div class="">
             <div class="">
-               <h4 class="page-title"><?php echo "Welcome back ". $_SESSION['login_name']."!"  ?></h4>
+               
                <hr><div style="background: #121FCF; background: linear-gradient(to right, #121FCF 0%, #CF1512 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">
 
 For any software development or website designing work contact me at     <a href="digital.marketing@alifhomesltd.com" >digital.marketing@alifhomesltd.com</a>

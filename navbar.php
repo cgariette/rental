@@ -93,9 +93,7 @@
                                 </ul>
                             </li>
 					
-					<?php if($_SESSION['login_type'] == 1): ?>
 					
-					<?php endif; ?>
 					<a href="#" class="nav-item" target="_blank"><span class='icon-field'> <i data-feather="film"></i></span> Pro Version</a>
 
 <a href="#" class="nav-item" target="_blank"><span class='icon-field'> <i data-feather="gift"></i></span> More Project</a>

@@ -223,38 +223,35 @@
 
 
 <script>
-    $('#manage-lease').on('reset', function(e) {
-        $('#msg').html('');
-    });
-
     $('#manage-lease').submit(function(e) {
-        e.preventDefault();
-        start_load();
-        $('#msg').html('');
-        $.ajax({
-            url: 'ajax.php?action=save_lease',
-            data: new FormData($(this)[0]),
-            cache: false,
-            contentType: false,
-            processData: false,
-            method: 'POST',
-            type: 'POST',
-            success: function(resp) {
-                if (resp.includes('1')) {
-                    alert_toast("Lease successfully saved", 'success');
-                    setTimeout(function() {
-                        location.href = 'index.php?page=leases';
-                    }, 1500);
-                } else if (resp.includes('2')) {
-                    $('#msg').html('<div class="alert alert-danger">Lease already exists.</div>');
-                    end_load();
-                } else {
-                    $('#msg').html('<div class="alert alert-danger">Failed to save lease.</div>');
-                    end_load();
-                }
+    e.preventDefault();
+    start_load();
+    $('#msg').html('');
+    $.ajax({
+        url: 'ajax.php?action=save_lease',
+        data: new FormData($(this)[0]),
+        cache: false,
+        contentType: false,
+        processData: false,
+        method: 'POST',
+        type: 'POST',
+        success: function(resp) {
+            if (resp.includes('1')) {
+                alert_toast("Lease successfully saved", 'success');
+                setTimeout(function() {
+                    location.href = 'index.php?page=leases';
+                }, 1500);
+            } else if (resp.includes('2')) {
+                $('#msg').html('<div class="alert alert-danger">Lease for this unit already exists.</div>');
+                end_load();
+            } else {
+                $('#msg').html('<div class="alert alert-danger">Failed to save lease.</div>');
+                end_load();
             }
-        });
+        }
     });
+});
+
 </script>
 
 <footer class="footer d-flex flex-column flex-md-row align-items-center justify-content-between px-4 py-3 border-top small">

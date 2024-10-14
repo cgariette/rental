@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2024 at 08:49 AM
+-- Generation Time: Oct 14, 2024 at 04:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -179,8 +179,7 @@ CREATE TABLE `leases` (
 --
 
 INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`, `start_date`, `due_on`, `deposit_amount`, `processing_fee`, `service_fee`, `garbage_fee`, `water_fee`, `late_fee`, `invoice_day`, `tenant_signature`, `landlord_signature`, `terms`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, 1, 100000.00, '2024-10-11', 5, 200000.00, 0.00, 10000.00, 300.00, 500.00, 2000.00, 1, '3', '3', 1, '2024-10-11 07:42:24', '2024-10-11 07:42:24'),
-(2, 2, 5, 3, 44.00, '2024-10-11', 4, 323.00, 32.00, 322.00, 32.00, 32.00, 323.00, 1, '3', '3', 1, '2024-10-11 11:30:22', '2024-10-11 11:30:22');
+(5, 1, 3, 2, 3.00, '2024-10-14', 5, 1.00, 32.00, 23.00, 23.00, 23.00, 23.00, 1, '3', '4', 1, '2024-10-14 12:59:42', '2024-10-14 12:59:42');
 
 -- --------------------------------------------------------
 
@@ -364,7 +363,7 @@ ALTER TABLE `houses`
 -- AUTO_INCREMENT for table `leases`
 --
 ALTER TABLE `leases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `payments`
