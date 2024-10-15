@@ -9,6 +9,9 @@
                     <div class="card">
                         <div class="card-header">
                             Lease Form
+                            <div class="float-right">
+                                <strong>Total: KES<span id="total-amount">0.00</span></strong>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="form-group" id="msg"></div>
@@ -191,6 +194,26 @@
 
 <script>
     $(document).ready(function() {
+
+        // Calculate total on input change
+        $('input[name="rent_amount"], input[name="deposit_amount"], input[name="processing_fee"], input[name="service_fee"], input[name="garbage_fee"], input[name="water_fee"], input[name="late_fee"]').on('input', function() {
+            calculateTotal();
+        });
+
+        function calculateTotal() {
+            let rent = parseFloat($('input[name="rent_amount"]').val()) || 0;
+            let deposit = parseFloat($('input[name="deposit_amount"]').val()) || 0;
+            let processingFee = parseFloat($('input[name="processing_fee"]').val()) || 0;
+            let serviceFee = parseFloat($('input[name="service_fee"]').val()) || 0;
+            let garbageFee = parseFloat($('input[name="garbage_fee"]').val()) || 0;
+            let waterFee = parseFloat($('input[name="water_fee"]').val()) || 0;
+            let lateFee = parseFloat($('input[name="late_fee"]').val()) || 0;
+
+            let total = rent + deposit + processingFee + serviceFee + garbageFee + waterFee + lateFee;
+            $('#total-amount').text(total.toFixed(2));
+        }
+
+
         // When the building is selected
         $('#building_id').change(function() {
             var buildingId = $(this).val(); // Get selected building ID

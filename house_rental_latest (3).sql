@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 14, 2024 at 04:01 PM
+-- Generation Time: Oct 15, 2024 at 03:18 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -47,8 +47,7 @@ INSERT INTO `apartments` (`id`, `building_id`, `unit_no`, `num_bedrooms`, `landl
 (2, 2, '101', 3, 'Alif Homes', 1500000.00, 120000.00, '2024-10-11 06:42:41'),
 (3, 1, '102', 2, 'Alif Homes', 10000000.00, 120000.00, '2024-10-11 06:53:38'),
 (4, 1, '103', 2, 'Alif Homes', 10000000.00, 120000.00, '2024-10-11 06:54:17'),
-(5, 2, '102', 4, 'Alif Homes', 20000000.00, 180000.00, '2024-10-11 06:54:48'),
-(6, 3, '101', 2, 'Alif Homes', 8500000.00, 80000.00, '2024-10-11 06:57:37');
+(5, 2, '102', 4, 'Alif Homes', 20000000.00, 180000.00, '2024-10-11 06:54:48');
 
 -- --------------------------------------------------------
 
@@ -74,8 +73,7 @@ CREATE TABLE `buildings` (
 
 INSERT INTO `buildings` (`id`, `property_name`, `category_id`, `developer`, `location`, `building_street`, `number_of_units`, `action`, `created_at`) VALUES
 (1, 'Skyway', 22, 'Alif Homes', 'Parklands, Westlands, Nairobi', 'Githuri Road', 160, 1, '2024-10-11 06:41:07'),
-(2, 'Utopia', 22, 'Alif Homes', 'Parklands, Westlands, Nairobi', 'Githuri Road', 64, 1, '2024-10-11 06:41:33'),
-(3, 'Rize', 22, 'Alif Homes', 'Parklands', '1st Avenue', 120, 1, '2024-10-11 06:56:42');
+(2, 'Utopia', 22, 'Alif Homes', 'Parklands, Westlands, Nairobi', 'Githuri Road', 64, 1, '2024-10-11 06:41:33');
 
 -- --------------------------------------------------------
 
@@ -171,15 +169,16 @@ CREATE TABLE `leases` (
   `landlord_signature` varchar(255) NOT NULL,
   `terms` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `balance` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `leases`
 --
 
-INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`, `start_date`, `due_on`, `deposit_amount`, `processing_fee`, `service_fee`, `garbage_fee`, `water_fee`, `late_fee`, `invoice_day`, `tenant_signature`, `landlord_signature`, `terms`, `created_at`, `updated_at`) VALUES
-(5, 1, 3, 2, 3.00, '2024-10-14', 5, 1.00, 32.00, 23.00, 23.00, 23.00, 23.00, 1, '3', '4', 1, '2024-10-14 12:59:42', '2024-10-14 12:59:42');
+INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`, `start_date`, `due_on`, `deposit_amount`, `processing_fee`, `service_fee`, `garbage_fee`, `water_fee`, `late_fee`, `invoice_day`, `tenant_signature`, `landlord_signature`, `terms`, `created_at`, `updated_at`, `balance`) VALUES
+(7, 1, 1, 1, 60000.00, '2024-11-01', 5, 120000.00, 0.00, 2000.00, 200.00, 500.00, 2000.00, 1, '5', '5', 1, '2024-10-15 09:07:32', '2024-10-15 10:20:20', -200000.00);
 
 -- --------------------------------------------------------
 
@@ -188,12 +187,20 @@ INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`
 --
 
 CREATE TABLE `payments` (
-  `id` int(30) NOT NULL,
-  `tenant_id` int(30) NOT NULL,
-  `amount` float NOT NULL,
-  `invoice` varchar(50) NOT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `lease_id` int(11) NOT NULL,
+  `payment_date` date NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_type` enum('Rent','Deposit','Processing Fee','Other') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `lease_id`, `payment_date`, `amount`, `payment_type`, `created_at`) VALUES
+(4, 7, '2024-10-15', 100000.00, 'Deposit', '2024-10-15 13:00:30');
 
 -- --------------------------------------------------------
 
@@ -305,7 +312,8 @@ ALTER TABLE `leases`
 -- Indexes for table `payments`
 --
 ALTER TABLE `payments`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `lease_id` (`lease_id`);
 
 --
 -- Indexes for table `system_settings`
@@ -363,13 +371,13 @@ ALTER TABLE `houses`
 -- AUTO_INCREMENT for table `leases`
 --
 ALTER TABLE `leases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -412,6 +420,12 @@ ALTER TABLE `leases`
   ADD CONSTRAINT `leases_ibfk_1` FOREIGN KEY (`building_id`) REFERENCES `buildings` (`id`),
   ADD CONSTRAINT `leases_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `apartments` (`id`),
   ADD CONSTRAINT `leases_ibfk_3` FOREIGN KEY (`tenant_id`) REFERENCES `clients` (`id`);
+
+--
+-- Constraints for table `payments`
+--
+ALTER TABLE `payments`
+  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`lease_id`) REFERENCES `leases` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

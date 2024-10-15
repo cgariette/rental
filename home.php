@@ -121,10 +121,7 @@ For any software development or website designing work contact me at     <a href
                                  <div class="col-9 align-self-center text-right">
                                     <div class="m-l-10">
                                        <h3 class="text1">
-                                          <?php 
-                                             $payment = $conn->query("SELECT sum(amount) as paid FROM payments where date(date_created) = '".date('Y-m-d')."' "); 
-                                             echo $payment->num_rows > 0 ? number_format($payment->fetch_array()['paid'],2) : 0;
-                                             ?>
+                                          
                                        </h3>
                                        <p>Payments This Month</p>
                                     </div>

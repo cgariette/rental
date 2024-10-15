@@ -63,6 +63,7 @@
                                     <td class="text-center">
                                         <!-- Action buttons -->
                                         <button class="btn btn-sm btn-primary view_payment" data-id="<?php echo $row['lease_no']; ?>">View Payment</button>
+                                        <button class="btn btn-sm btn-primary view_lease" data-id="<?php echo $row['lease_no']; ?>">View Lease</button>
                                         <button class="btn btn-sm btn-warning edit_tenant" data-id="<?php echo $row['lease_no']; ?>">Edit</button>
                                         <button class="btn btn-sm btn-danger delete_tenant" data-id="<?php echo $row['lease_no']; ?>">Delete</button>
                                     </td>
@@ -86,6 +87,10 @@
         uni_modal("Tenant's Payments", "view_payment.php?id=" + $(this).attr('data-id'), "large");
     });
 
+    $('.view_lease').click(function() {
+        uni_modal("Tenant's Lease", "view_lease.php?id=" + $(this).attr('data-id'), "large");
+    });
+
     $('.edit_tenant').click(function() {
         uni_modal("Manage Tenant Details", "manage_tenant.php?id=" + $(this).attr('data-id'), "mid-large");
     });
@@ -98,7 +103,7 @@
         if (confirm("Are you sure you want to delete this lease?")) {
             $.ajax({
                 url: 'ajax.php?action=delete_tenant',
-                method: 'POST',
+                method: 'GET',
                 data: { id: id },
                 success: function(resp) {
                     if (resp.includes('1')) {

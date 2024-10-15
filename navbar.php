@@ -39,7 +39,7 @@
                                 <ul class="list-unstyled">
                                 <li><a href="index.php?page=invoices">Invoices</a></li>    
                                 <li><a href="index.php?page=expenses">Expenses</a></li>
-                                <li><a href="#">Payments</a></li>    
+                                <li><a href="index.php?page=payments">Payments</a></li>    
                                 <li><a href="#">Bank Payments</a></li>
                                 </ul>
                             </li>
