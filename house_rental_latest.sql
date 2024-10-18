@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2024 at 03:18 PM
+-- Generation Time: Oct 18, 2024 at 01:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -147,6 +147,26 @@ CREATE TABLE `houses` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL,
+  `lease_id` int(11) NOT NULL,
+  `tenant_id` int(11) NOT NULL,
+  `invoice_number` varchar(50) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `paid_amount` decimal(10,2) DEFAULT 0.00,
+  `owed_amount` decimal(10,2) NOT NULL,
+  `status` enum('paid','partially_paid','pending') NOT NULL,
+  `invoice_date` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `leases`
 --
 
@@ -170,15 +190,17 @@ CREATE TABLE `leases` (
   `terms` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `balance` decimal(10,2) NOT NULL DEFAULT 0.00
+  `balance` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `monthly_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `leases`
 --
 
-INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`, `start_date`, `due_on`, `deposit_amount`, `processing_fee`, `service_fee`, `garbage_fee`, `water_fee`, `late_fee`, `invoice_day`, `tenant_signature`, `landlord_signature`, `terms`, `created_at`, `updated_at`, `balance`) VALUES
-(7, 1, 1, 1, 60000.00, '2024-11-01', 5, 120000.00, 0.00, 2000.00, 200.00, 500.00, 2000.00, 1, '5', '5', 1, '2024-10-15 09:07:32', '2024-10-15 10:20:20', -200000.00);
+INSERT INTO `leases` (`id`, `building_id`, `unit_id`, `tenant_id`, `rent_amount`, `start_date`, `due_on`, `deposit_amount`, `processing_fee`, `service_fee`, `garbage_fee`, `water_fee`, `late_fee`, `invoice_day`, `tenant_signature`, `landlord_signature`, `terms`, `created_at`, `updated_at`, `balance`, `monthly_total`) VALUES
+(12, 1, 1, 1, 100.00, '2024-10-17', 1, 200.00, 0.00, 20.00, 5.00, 5.00, 0.00, 1, '0', '2', 1, '2024-10-17 10:25:00', '2024-10-17 10:25:00', 0.00, 130.00),
+(13, 2, 5, 3, 20000.00, '2024-11-01', 5, 1.00, 0.00, 2000.00, 200.00, 280.00, 0.00, 1, '23', '4', 1, '2024-10-18 08:41:43', '2024-10-18 08:41:43', 0.00, 22480.00);
 
 -- --------------------------------------------------------
 
@@ -194,13 +216,6 @@ CREATE TABLE `payments` (
   `payment_type` enum('Rent','Deposit','Processing Fee','Other') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `payments`
---
-
-INSERT INTO `payments` (`id`, `lease_id`, `payment_date`, `amount`, `payment_type`, `created_at`) VALUES
-(4, 7, '2024-10-15', 100000.00, 'Deposit', '2024-10-15 13:00:30');
 
 -- --------------------------------------------------------
 
@@ -300,6 +315,14 @@ ALTER TABLE `houses`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `lease_id` (`lease_id`),
+  ADD KEY `tenant_id` (`tenant_id`);
+
+--
 -- Indexes for table `leases`
 --
 ALTER TABLE `leases`
@@ -368,10 +391,16 @@ ALTER TABLE `houses`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `leases`
 --
 ALTER TABLE `leases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -412,6 +441,13 @@ ALTER TABLE `apartments`
 --
 ALTER TABLE `buildings`
   ADD CONSTRAINT `buildings_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`lease_id`) REFERENCES `leases` (`id`),
+  ADD CONSTRAINT `invoices_ibfk_2` FOREIGN KEY (`tenant_id`) REFERENCES `clients` (`id`);
 
 --
 -- Constraints for table `leases`

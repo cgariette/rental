@@ -10,12 +10,14 @@
                         <div class="card-header">
                             Lease Form
                             <div class="float-right">
-                                <strong>Total: KES<span id="total-amount">0.00</span></strong>
+                                <strong>Monthly Total: KES<span id="total-amount">0.00</span></strong>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="form-group" id="msg"></div>
                             <div class="row">
+
+                            <input type="hidden" name="monthly_total" id="monthly_total" value="0.00">
                                 <!-- Select Building -->
                                 <div class="col-md-6">
                                 <div class="form-group">
@@ -202,15 +204,13 @@
 
         function calculateTotal() {
             let rent = parseFloat($('input[name="rent_amount"]').val()) || 0;
-            let deposit = parseFloat($('input[name="deposit_amount"]').val()) || 0;
-            let processingFee = parseFloat($('input[name="processing_fee"]').val()) || 0;
             let serviceFee = parseFloat($('input[name="service_fee"]').val()) || 0;
             let garbageFee = parseFloat($('input[name="garbage_fee"]').val()) || 0;
             let waterFee = parseFloat($('input[name="water_fee"]').val()) || 0;
-            let lateFee = parseFloat($('input[name="late_fee"]').val()) || 0;
 
-            let total = rent + deposit + processingFee + serviceFee + garbageFee + waterFee + lateFee;
+            let total = rent +serviceFee + garbageFee + waterFee;
             $('#total-amount').text(total.toFixed(2));
+            $('#monthly_total').val(total.toFixed(2));
         }
 
 

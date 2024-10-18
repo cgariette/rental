@@ -211,6 +211,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'save_lease') {
     $tenant_signature = $_POST['tenant_signature'];
     $landlord_signature = $_POST['landlord_signature'];
     $terms = isset($_POST['terms']) ? 1 : 0;
+    $monthly_total = $_POST['monthly_total'];
+
 
     // Check if a lease already exists for the unit (regardless of tenant)
     $check_lease = $conn->query("SELECT * FROM leases WHERE unit_id = '$unit_id' LIMIT 1");
@@ -220,8 +222,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'save_lease') {
     }
 
     // Insert the new lease if no existing lease is found
-    $stmt = $conn->prepare("INSERT INTO leases (building_id, unit_id, tenant_id, rent_amount, start_date, due_on, deposit_amount, processing_fee, service_fee, garbage_fee, water_fee, late_fee, invoice_day, tenant_signature, landlord_signature, terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("iiissidddddddsss", $building_id, $unit_id, $tenant_id, $rent_amount, $start_date, $due_on, $deposit_amount, $processing_fee, $service_fee, $garbage_fee, $water_fee, $late_fee, $invoice_day, $tenant_signature, $landlord_signature, $terms);
+    $stmt = $conn->prepare("INSERT INTO leases (building_id, unit_id, tenant_id, rent_amount, start_date, due_on, deposit_amount, processing_fee, service_fee, garbage_fee, water_fee, late_fee, invoice_day, tenant_signature, landlord_signature, terms, monthly_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iiissidddddddsssd", $building_id, $unit_id, $tenant_id, $rent_amount, $start_date, $due_on, $deposit_amount, $processing_fee, $service_fee, $garbage_fee, $water_fee, $late_fee, $invoice_day, $tenant_signature, $landlord_signature, $terms, $monthly_total);
 
     if ($stmt->execute()) {
         echo "1"; // Lease successfully saved
@@ -229,6 +231,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'save_lease') {
         echo "3"; // Failed to save lease
     }
 }
+
+
 
 
 if (isset($_GET['action']) && $_GET['action'] == 'delete_tenant') {
